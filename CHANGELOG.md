@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.1
+
+- Migrated the settings tab to Obsidian's declarative `getSettingDefinitions()` API.
+- Made every setting searchable by name, description, and relevant aliases in Obsidian's global settings search.
+- Preserved the custom template-folder manager and synchronized numeric-input/slider report-limit control as indexed declarative render definitions.
+- Replaced the automatic-update debounce text field with a validated numerical input accepting whole milliseconds from 250 through 60000.
+- Raised `minAppVersion` to Obsidian 1.13.0, the version that introduced declarative searchable plugin settings.
+- Added GitHub build-provenance attestations for `main.js`, `manifest.json`, and `styles.css` before release publication.
+- Added regression coverage for the complete searchable-setting inventory and control metadata.
+
 ## 0.4.0
 
 - Renamed the plugin to **Dynamic Template Children Updater**.

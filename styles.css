@@ -8,6 +8,11 @@
   resize: vertical;
 }
 
+.dtcu-template-locations-setting {
+  display: block;
+  padding: 0;
+}
+
 .dtcu-template-locations-panel {
   background: var(--background-secondary);
   border: 1px solid var(--background-modifier-border);

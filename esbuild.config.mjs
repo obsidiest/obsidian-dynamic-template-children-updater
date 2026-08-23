@@ -4,7 +4,7 @@ const production = globalThis.process.argv[2] === "production";
 
 const context = await esbuild.context({
   banner: {
-    js: "/* Dynamic Template Children Updater v0.4.0 | MIT | obsidiest */",
+    js: "/* Dynamic Template Children Updater v0.4.1 | MIT | obsidiest */",
   },
   bundle: true,
   entryPoints: ["src/main.ts"],

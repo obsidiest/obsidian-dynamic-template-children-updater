@@ -11,12 +11,14 @@ import {
   prepareFuzzySearch,
   setIcon,
   Setting,
+  type SettingDefinitionItem,
   SliderComponent,
   TextComponent,
   TFolder,
 } from "obsidian";
 import {
   DEFAULT_MAXIMUM_CHANGED_NOTES_IN_REPORT,
+  DEFAULT_SETTINGS,
   MAXIMUM_CHANGED_NOTES_IN_REPORT,
   MINIMUM_CHANGED_NOTES_IN_REPORT,
   type DynamicTemplateChildrenUpdaterSettings,
@@ -27,6 +29,10 @@ export interface SettingsPluginHost extends Plugin {
   settings: DynamicTemplateChildrenUpdaterSettings;
   saveSettings(reconcile?: boolean): Promise<void>;
 }
+
+type SettingsKey = keyof DynamicTemplateChildrenUpdaterSettings;
+
+const SETTINGS_KEYS = new Set<string>(Object.keys(DEFAULT_SETTINGS));
 
 function normalizeFolderLocation(value: string): string {
   const trimmed = value.trim();
@@ -211,153 +217,227 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
     this.host = plugin;
   }
 
-  public override display(): void {
-    this.renderSettings();
-  }
-
   public override hide(): void {
     this.closeFolderSuggests();
     super.hide();
   }
 
-  private renderSettings(): void {
-    this.closeFolderSuggests();
-    const { containerEl } = this;
-    containerEl.empty();
+  public override getSettingDefinitions(): SettingDefinitionItem<SettingsKey>[] {
+    return [
+      {
+        type: "group",
+        heading: "Template discovery",
+        items: [
+          {
+            name: "Note template class property",
+            desc: "Top-level property whose internal link selects a note's template. The plugin keeps this property last whenever it rewrites frontmatter.",
+            aliases: ["template class", "template property", "class link"],
+            control: {
+              type: "text",
+              key: "noteTemplateClassProperty",
+              defaultValue: DEFAULT_SETTINGS.noteTemplateClassProperty,
+              placeholder: "Note Template Class",
+            },
+          },
+          {
+            name: "Note template locations",
+            desc: "Folders whose Markdown files are templates and are never updated as child notes.",
+            aliases: ["template folders", "template paths", "discovery folders"],
+            render: (setting) => {
+              setting.settingEl.empty();
+              setting.settingEl.addClass("dtcu-template-locations-setting");
+              this.renderTemplateLocations(setting.settingEl);
+              return () => this.closeFolderSuggests();
+            },
+          },
+        ],
+      },
+      {
+        type: "group",
+        heading: "Update behavior",
+        items: [
+          {
+            name: "Automatically update note template children",
+            desc: "After a designated template changes, update its linked child notes after the debounce interval. Disabled by default so the initial baseline can be reviewed first.",
+            aliases: ["automatic sync", "auto update", "background update"],
+            control: {
+              type: "toggle",
+              key: "automaticallyUpdateChildren",
+              defaultValue: DEFAULT_SETTINGS.automaticallyUpdateChildren,
+            },
+          },
+          {
+            name: "Apply given default property key updates to existing child notes with non-default property keys",
+            desc: "Reapply the current projected property names, hierarchy, and order to matched fields, even when a child customized them or the template itself has not changed. Enabled by default.",
+            aliases: ["property names", "property hierarchy", "property order"],
+            control: {
+              type: "toggle",
+              key: "applyPropertyKeyUpdatesToNonDefaultKeys",
+              defaultValue:
+                DEFAULT_SETTINGS.applyPropertyKeyUpdatesToNonDefaultKeys,
+            },
+          },
+          {
+            name: "Apply given default property value updates to existing child notes with non-default property values",
+            desc: "Reapply current projected property values to matched fields, overwriting non-default child values even when the template itself has not changed. Disabled by default; key updates can still carry child values forward.",
+            aliases: ["property defaults", "property values", "frontmatter values"],
+            control: {
+              type: "toggle",
+              key: "applyPropertyValueUpdatesToNonDefaultValues",
+              defaultValue:
+                DEFAULT_SETTINGS.applyPropertyValueUpdatesToNonDefaultValues,
+            },
+          },
+          {
+            name: "Apply given default heading updates to existing child notes with non-default heading values",
+            desc: "Reapply current projected heading names, levels, hierarchy, and order to matched headings, even when a child customized them or the template itself has not changed. Enabled by default.",
+            aliases: ["heading names", "heading levels", "heading hierarchy"],
+            control: {
+              type: "toggle",
+              key: "applyHeadingUpdatesToNonDefaultHeadings",
+              defaultValue:
+                DEFAULT_SETTINGS.applyHeadingUpdatesToNonDefaultHeadings,
+            },
+          },
+          {
+            name: "Apply given default body text updates for a heading to existing child notes with non-default body text",
+            desc: "Reapply current projected body text to matched sections, overwriting non-default child text even when the template itself has not changed. Disabled by default.",
+            aliases: ["section text", "body defaults", "heading body"],
+            control: {
+              type: "toggle",
+              key: "applyBodyTextUpdatesToNonDefaultBody",
+              defaultValue:
+                DEFAULT_SETTINGS.applyBodyTextUpdatesToNonDefaultBody,
+            },
+          },
+          {
+            name: "Automatic update debounce",
+            desc: "Milliseconds to wait after a template edit before synchronizing children.",
+            aliases: ["update delay", "sync delay", "milliseconds"],
+            control: {
+              type: "number",
+              key: "updateDebounceMilliseconds",
+              defaultValue: DEFAULT_SETTINGS.updateDebounceMilliseconds,
+              placeholder: "1000",
+              min: 250,
+              max: 60_000,
+              step: 1,
+              validate: (value) =>
+                Number.isInteger(value) && value >= 250 && value <= 60_000
+                  ? undefined
+                  : "Enter a whole number from 250 through 60000.",
+            },
+          },
+        ],
+      },
+      {
+        type: "group",
+        heading: "Update reports",
+        items: [
+          {
+            name: "Show detailed changes in manual update report",
+            desc: "Add one collapsed section per changed child note to the report, including the property, heading, and body-text updates made to that note.",
+            aliases: ["change details", "manual report", "updated notes"],
+            control: {
+              type: "toggle",
+              key: "showDetailedChangesInManualUpdateReport",
+              defaultValue:
+                DEFAULT_SETTINGS.showDetailedChangesInManualUpdateReport,
+            },
+          },
+          {
+            name: "Maximum amount of changed notes to display in this report",
+            desc: "Limits the detailed changed-note sections while preserving the complete summary and all reported errors.",
+            aliases: ["report limit", "maximum changed notes", "change count"],
+            render: (setting) => this.renderMaximumChangedNotesSetting(setting),
+          },
+        ],
+      },
+      {
+        type: "group",
+        heading: "Templater projection",
+        items: [
+          {
+            name: "Templater expression defaults",
+            desc: "Advanced JSON object mapping an exact expression (without ${…} or <%…%>) to its static default. Built-in rules already cover listBlock, parsed.edited, coverImageBlock, sourceFileUrlsBlock, noteTitle, and common empty ternaries.",
+            aliases: ["projection replacements", "static defaults", "advanced JSON"],
+            render: (setting) => {
+              setting
+                .setClass("dtcu-setting-textarea")
+                .addTextArea((text) => {
+                  text
+                    .setPlaceholder(
+                      '{\n  "customExpression": "default output"\n}',
+                    )
+                    .setValue(
+                      this.host.settings.templaterExpressionDefaultsJson,
+                    )
+                    .onChange((value) => {
+                      void this.setControlValue(
+                        "templaterExpressionDefaultsJson",
+                        value,
+                      );
+                    });
+                });
+            },
+          },
+        ],
+      },
+    ];
+  }
 
-    new Setting(containerEl).setName("Template discovery").setHeading();
+  public override getControlValue(key: string): unknown {
+    if (!SETTINGS_KEYS.has(key)) {
+      return undefined;
+    }
+    return this.host.settings[key as SettingsKey];
+  }
 
-    new Setting(containerEl)
-      .setName("Note template class property")
-      .setDesc(
-        "Top-level property whose internal link selects a note's template. The plugin keeps this property last whenever it rewrites frontmatter.",
-      )
-      .addText((text) => {
-        text
-          .setPlaceholder(["Note", "Template", "Class"].join(" "))
-          .setValue(this.host.settings.noteTemplateClassProperty)
-          .onChange(async (value) => {
-            this.host.settings.noteTemplateClassProperty = value.trim();
-            await this.host.saveSettings();
-          });
-      });
+  public override async setControlValue(
+    key: string,
+    value: unknown,
+  ): Promise<void> {
+    switch (key) {
+      case "noteTemplateClassProperty":
+        if (typeof value !== "string") {
+          return;
+        }
+        this.host.settings.noteTemplateClassProperty = value.trim();
+        break;
+      case "updateDebounceMilliseconds":
+        if (typeof value !== "number" || !Number.isFinite(value)) {
+          return;
+        }
+        this.host.settings.updateDebounceMilliseconds = Math.round(
+          clamp(value, 250, 60_000),
+        );
+        break;
+      case "templaterExpressionDefaultsJson":
+        if (typeof value !== "string") {
+          return;
+        }
+        this.host.settings.templaterExpressionDefaultsJson = value;
+        break;
+      case "automaticallyUpdateChildren":
+      case "applyPropertyKeyUpdatesToNonDefaultKeys":
+      case "applyPropertyValueUpdatesToNonDefaultValues":
+      case "applyHeadingUpdatesToNonDefaultHeadings":
+      case "applyBodyTextUpdatesToNonDefaultBody":
+      case "showDetailedChangesInManualUpdateReport":
+        if (typeof value !== "boolean") {
+          return;
+        }
+        this.host.settings[key] = value;
+        break;
+      default:
+        return;
+    }
 
-    this.renderTemplateLocations(containerEl);
-
-    new Setting(containerEl).setName("Update behavior").setHeading();
-
-    new Setting(containerEl)
-      .setName("Automatically update note template children")
-      .setDesc(
-        "After a designated template changes, update its linked child notes after the debounce interval. Disabled by default so the initial baseline can be reviewed first.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(this.host.settings.automaticallyUpdateChildren)
-          .onChange(async (value) => {
-            this.host.settings.automaticallyUpdateChildren = value;
-            await this.host.saveSettings();
-          });
-      });
-
-    new Setting(containerEl)
-      .setName("Apply given default property key updates to existing child notes with non-default property keys")
-      .setDesc(
-        "Reapply the current projected property names, hierarchy, and order to matched fields, even when a child customized them or the template itself has not changed. Enabled by default.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(
-            this.host.settings.applyPropertyKeyUpdatesToNonDefaultKeys,
-          )
-          .onChange(async (value) => {
-            this.host.settings.applyPropertyKeyUpdatesToNonDefaultKeys = value;
-            await this.host.saveSettings();
-          });
-      });
-
-    new Setting(containerEl)
-      .setName("Apply given default property value updates to existing child notes with non-default property values")
-      .setDesc(
-        "Reapply current projected property values to matched fields, overwriting non-default child values even when the template itself has not changed. Disabled by default; key updates can still carry child values forward.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(
-            this.host.settings.applyPropertyValueUpdatesToNonDefaultValues,
-          )
-          .onChange(async (value) => {
-            this.host.settings.applyPropertyValueUpdatesToNonDefaultValues = value;
-            await this.host.saveSettings();
-          });
-      });
-
-    new Setting(containerEl)
-      .setName("Apply given default heading updates to existing child notes with non-default heading values")
-      .setDesc(
-        "Reapply current projected heading names, levels, hierarchy, and order to matched headings, even when a child customized them or the template itself has not changed. Enabled by default.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(this.host.settings.applyHeadingUpdatesToNonDefaultHeadings)
-          .onChange(async (value) => {
-            this.host.settings.applyHeadingUpdatesToNonDefaultHeadings = value;
-            await this.host.saveSettings();
-          });
-      });
-
-    new Setting(containerEl)
-      .setName("Apply given default body text updates for a heading to existing child notes with non-default body text")
-      .setDesc(
-        "Reapply current projected body text to matched sections, overwriting non-default child text even when the template itself has not changed. Disabled by default.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(this.host.settings.applyBodyTextUpdatesToNonDefaultBody)
-          .onChange(async (value) => {
-            this.host.settings.applyBodyTextUpdatesToNonDefaultBody = value;
-            await this.host.saveSettings();
-          });
-      });
-
-    new Setting(containerEl)
-      .setName("Automatic update debounce")
-      .setDesc("Milliseconds to wait after a template edit before synchronizing children.")
-      .addText((text) => {
-        text
-          .setPlaceholder("1000")
-          .setValue(String(this.host.settings.updateDebounceMilliseconds))
-          .onChange(async (value) => {
-            const parsed = Number.parseInt(value, 10);
-            if (Number.isFinite(parsed)) {
-              this.host.settings.updateDebounceMilliseconds = Math.min(
-                60_000,
-                Math.max(250, parsed),
-              );
-              await this.host.saveSettings();
-            }
-          });
-      });
-
-    this.renderReportSettings(containerEl);
-
-    new Setting(containerEl).setName("Templater projection").setHeading();
-
-    new Setting(containerEl)
-      .setName("Templater expression defaults")
-      .setDesc(
-        "Advanced JSON object mapping an exact expression (without ${…} or <%…%>) to its static default. Built-in rules already cover listBlock, parsed.edited, coverImageBlock, sourceFileUrlsBlock, noteTitle, and common empty ternaries.",
-      )
-      .setClass("dtcu-setting-textarea")
-      .addTextArea((text) => {
-        text
-          .setPlaceholder('{\n  "customExpression": "default output"\n}')
-          .setValue(this.host.settings.templaterExpressionDefaultsJson)
-          .onChange(async (value) => {
-            this.host.settings.templaterExpressionDefaultsJson = value;
-            await this.host.saveSettings();
-          });
-      });
+    const reportOnly = key === "showDetailedChangesInManualUpdateReport";
+    await this.host.saveSettings(!reportOnly);
+    if (reportOnly) {
+      this.update();
+    }
   }
 
   private renderTemplateLocations(containerEl: HTMLElement): void {
@@ -461,33 +541,10 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
     });
   }
 
-  private renderReportSettings(containerEl: HTMLElement): void {
-    new Setting(containerEl).setName("Update reports").setHeading();
-
-    new Setting(containerEl)
-      .setName("Show detailed changes in manual update report")
-      .setDesc(
-        "Add one collapsed section per changed child note to the report, including the property, heading, and body-text updates made to that note.",
-      )
-      .addToggle((toggle) => {
-        toggle
-          .setValue(
-            this.host.settings.showDetailedChangesInManualUpdateReport,
-          )
-          .onChange(async (value) => {
-            this.host.settings.showDetailedChangesInManualUpdateReport = value;
-            await this.host.saveSettings(false);
-            this.renderSettings();
-          });
-      });
-
+  private renderMaximumChangedNotesSetting(setting: Setting): void {
     let numberInput: TextComponent | null = null;
     let sliderInput: SliderComponent | null = null;
-    const setting = new Setting(containerEl)
-      .setName("Maximum amount of changed notes to display in this report")
-      .setDesc(
-        "Limits the detailed changed-note sections while preserving the complete summary and all reported errors.",
-      )
+    setting
       .setClass("dtcu-report-limit-setting")
       .setDisabled(
         !this.host.settings.showDetailedChangesInManualUpdateReport,
@@ -586,13 +643,13 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
     const folder = resolveFolder(this.app, value);
     if (folder === null) {
       new Notice("Select an existing vault folder.");
-      this.renderSettings();
+      this.update();
       return;
     }
     const location = folderLocation(folder);
     if (this.excludedLocations(index).has(location)) {
       new Notice("That template folder is already listed.");
-      this.renderSettings();
+      this.update();
       return;
     }
     await this.chooseTemplateLocation(index, location);
@@ -610,7 +667,7 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
     }
     this.host.settings.noteTemplateLocations = locations;
     await this.host.saveSettings();
-    this.renderSettings();
+    this.update();
   }
 
   private async removeTemplateLocation(index: number): Promise<void> {
@@ -619,7 +676,7 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
         (_location, locationIndex) => locationIndex !== index,
       );
     await this.host.saveSettings();
-    this.renderSettings();
+    this.update();
   }
 
   private configureDragHandle(
@@ -689,7 +746,7 @@ export class DynamicTemplateChildrenUpdaterSettingTab extends PluginSettingTab {
     locations.splice(targetIndex, 0, moved);
     this.host.settings.noteTemplateLocations = locations;
     await this.host.saveSettings();
-    this.renderSettings();
+    this.update();
   }
 
   private clearDragTargets(): void {
