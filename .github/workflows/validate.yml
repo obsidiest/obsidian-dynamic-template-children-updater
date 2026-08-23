@@ -30,6 +30,8 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Confirm committed runtime is current
+        run: git diff --exit-code -- main.js
       - name: Upload validated plugin files
         uses: actions/upload-artifact@v4
         with:
