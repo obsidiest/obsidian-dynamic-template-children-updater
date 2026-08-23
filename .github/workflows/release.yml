@@ -2,8 +2,13 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "*"
+    paths:
+      - ".github/release-request.json"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -22,18 +27,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Validate
-        run: npm run lint && npm test && npm run build
-      - name: Confirm tag and manifest versions match
+        run: npx tsc --noEmit && npm run lint && npm test && npm run build
+      - name: Confirm committed runtime is current
+        run: git diff --exit-code -- main.js
+      - name: Resolve and validate release version
+        id: release
         shell: bash
         run: |
           manifest_version="$(node -p "require('./manifest.json').version")"
-          if [ "$manifest_version" != "$GITHUB_REF_NAME" ]; then
-            echo "Tag $GITHUB_REF_NAME does not match manifest version $manifest_version."
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            release_version="$GITHUB_REF_NAME"
+          else
+            release_version="$(node -p "require('./.github/release-request.json').version")"
+          fi
+          if [ "$manifest_version" != "$release_version" ]; then
+            echo "Release version $release_version does not match manifest version $manifest_version."
             exit 1
           fi
+          if ! [[ "$release_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release version $release_version must use x.y.z Semantic Versioning format."
+            exit 1
+          fi
+          notes_file=".github/release-notes/$release_version.md"
+          if [ ! -f "$notes_file" ]; then
+            echo "Release notes file $notes_file does not exist."
+            exit 1
+          fi
+          echo "version=$release_version" >> "$GITHUB_OUTPUT"
+          echo "notes_file=$notes_file" >> "$GITHUB_OUTPUT"
       - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
+          tag_name: ${{ steps.release.outputs.version }}
+          name: Dynamic Template Children Updater ${{ steps.release.outputs.version }}
+          body_path: ${{ steps.release.outputs.notes_file }}
+          target_commitish: ${{ github.sha }}
+          fail_on_unmatched_files: true
           files: |
             main.js
             manifest.json
