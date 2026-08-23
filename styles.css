@@ -1,0 +1,218 @@
+.dtcu-setting-textarea .setting-item-control,
+.dtcu-setting-textarea textarea {
+  width: 100%;
+}
+
+.dtcu-setting-textarea textarea {
+  min-height: 8em;
+  resize: vertical;
+}
+
+.dtcu-template-locations-panel {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-l);
+  margin-block: var(--size-4-3) var(--size-4-6);
+  overflow: visible;
+}
+
+.dtcu-template-locations-summary {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  gap: var(--size-4-3);
+  list-style: none;
+  padding: var(--size-4-4);
+}
+
+.dtcu-template-locations-summary::-webkit-details-marker {
+  display: none;
+}
+
+.dtcu-template-locations-summary::before {
+  color: var(--text-muted);
+  content: "›";
+  font-size: 1.5em;
+  line-height: 1;
+  transform-origin: center;
+  transition: transform 100ms ease;
+}
+
+.dtcu-template-locations-panel[open]
+  > .dtcu-template-locations-summary::before {
+  transform: rotate(90deg);
+}
+
+.dtcu-template-locations-summary-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.dtcu-template-locations-title {
+  color: var(--text-normal);
+  font-weight: var(--font-semibold);
+}
+
+.dtcu-template-locations-description,
+.dtcu-folder-suggestion-path,
+.dtcu-report-template-path,
+.dtcu-report-limit-notice {
+  color: var(--text-muted);
+}
+
+.dtcu-template-location-add {
+  flex: 0 0 auto;
+}
+
+.dtcu-template-location-list {
+  border-top: 1px solid var(--background-modifier-border);
+  padding: var(--size-4-2) var(--size-4-4) var(--size-4-4);
+}
+
+.dtcu-template-location-row {
+  align-items: center;
+  border-bottom: 1px solid var(--background-modifier-border);
+  display: flex;
+  gap: var(--size-4-1);
+  padding-block: var(--size-4-2);
+  transition: background-color 100ms ease, outline-color 100ms ease;
+}
+
+.dtcu-template-location-row:last-child {
+  border-bottom: 0;
+}
+
+.dtcu-template-location-row input[type="text"] {
+  flex: 1 1 auto;
+  min-width: 8rem;
+  width: 100%;
+}
+
+.dtcu-template-location-row.is-dragging {
+  opacity: 0.45;
+}
+
+.dtcu-template-location-row.is-drag-target {
+  background: var(--background-modifier-hover);
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 2px;
+}
+
+.dtcu-template-location-empty {
+  color: var(--text-muted);
+  padding: var(--size-4-3) 0;
+  text-align: center;
+}
+
+.dtcu-folder-suggestion-title {
+  color: var(--text-normal);
+  font-weight: var(--font-medium);
+}
+
+.dtcu-folder-suggestion-path {
+  font-size: var(--font-ui-smaller);
+}
+
+.dtcu-folder-editor-modal {
+  width: min(42rem, 90vw);
+}
+
+.dtcu-folder-editor-modal .setting-item-control,
+.dtcu-folder-editor-modal input[type="text"] {
+  width: min(24rem, 100%);
+}
+
+.dtcu-folder-validation {
+  color: var(--text-error);
+  min-height: 1.5em;
+}
+
+.dtcu-report-limit-setting input[type="number"] {
+  text-align: center;
+  width: 5.5em;
+}
+
+.dtcu-number-slider-control input[type="range"] {
+  min-width: 12rem;
+}
+
+.dtcu-projection-preview {
+  box-sizing: border-box;
+  font-family: var(--font-monospace);
+  min-height: 55vh;
+  resize: vertical;
+  width: 100%;
+}
+
+.dtcu-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--size-4-2);
+  justify-content: flex-end;
+  margin-top: var(--size-4-3);
+}
+
+.dtcu-diagnostics,
+.dtcu-report-template,
+.dtcu-report-child {
+  margin-block: var(--size-4-2);
+}
+
+.dtcu-report-modal {
+  width: min(54rem, 92vw);
+}
+
+.dtcu-report-child {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: var(--radius-m);
+  padding: var(--size-4-2) var(--size-4-3);
+}
+
+.dtcu-report-child > summary {
+  cursor: pointer;
+  font-weight: var(--font-medium);
+}
+
+.dtcu-change-list {
+  display: grid;
+  gap: var(--size-4-2);
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+.dtcu-change {
+  align-items: baseline;
+  display: grid;
+  gap: var(--size-4-2);
+  grid-template-columns: 6rem minmax(0, 1fr);
+}
+
+.dtcu-change-category {
+  background: var(--background-modifier-hover);
+  border-radius: var(--radius-s);
+  color: var(--text-muted);
+  font-size: var(--font-ui-smaller);
+  padding: 0 var(--size-4-1);
+  text-align: center;
+}
+
+.dtcu-conflict,
+.dtcu-report-template.is-error > summary,
+.dtcu-report-child.is-error > summary {
+  color: var(--text-error);
+}
+
+@media (max-width: 700px) {
+  .dtcu-template-location-row {
+    flex-wrap: wrap;
+  }
+
+  .dtcu-number-slider-control {
+    flex-wrap: wrap;
+  }
+
+  .dtcu-change {
+    grid-template-columns: 1fr;
+  }
+}

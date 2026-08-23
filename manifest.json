@@ -1,0 +1,10 @@
+{
+  "id": "dynamic-template-children-updater",
+  "name": "Dynamic Template Children Updater",
+  "version": "0.4.0",
+  "minAppVersion": "1.8.7",
+  "description": "Update existing template children from evolving core Templates and Templater templates while preserving selected child-note customizations.",
+  "author": "obsidiest",
+  "authorUrl": "https://github.com/obsidiest",
+  "isDesktopOnly": false
+}
