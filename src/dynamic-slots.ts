@@ -111,7 +111,21 @@ export function materializeDynamicValue(
     }
 
     return value.replace(DYNAMIC_TOKEN_PATTERN, (_match, token: string) => {
-      return String(captures[token] ?? dynamicValues[token] ?? "");
+      const replacement = Object.hasOwn(captures, token)
+        ? captures[token]
+        : dynamicValues[token];
+
+      if (typeof replacement === "string") {
+        return replacement;
+      }
+      if (
+        typeof replacement === "number" ||
+        typeof replacement === "boolean" ||
+        typeof replacement === "bigint"
+      ) {
+        return String(replacement);
+      }
+      return "";
     });
   }
 
