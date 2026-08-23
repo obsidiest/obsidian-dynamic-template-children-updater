@@ -58,6 +58,8 @@ The merge also follows matched properties across parent-hierarchy changes, recog
 
 ## Settings
 
+On Obsidian 1.13.0 and later, every setting below is indexed by Obsidian's global settings search using its name, description, and relevant aliases.
+
 | Setting | Default | Effect |
 | --- | --- | --- |
 | Note template class property | `Note Template Class` | Selects the top-level property containing the template link. |
@@ -67,8 +69,10 @@ The merge also follows matched properties across parent-hierarchy changes, recog
 | Apply given default property value updates… | Off | Reapplies current projected values to matched fields, including non-default child values. |
 | Apply given default heading updates… | On | Reapplies current projected heading names, levels, hierarchy, and order to matched child headings. |
 | Apply given default body text updates… | Off | Reapplies current projected section text to matched sections, including non-default child text. |
+| Automatic update debounce | `1000` | Whole milliseconds to wait after a template edit before automatic synchronization (`250`–`60000`). |
 | Show detailed changes in manual update report | On | Adds one collapsed section per changed child note with its property, heading, and body-text updates. |
 | Maximum amount of changed notes to display in this report | `25` | Caps detailed changed-note sections. Includes a numeric input, slider (`1`–`500`), and reset button; summaries and errors remain complete. |
+| Templater expression defaults | `{}` | Advanced JSON replacements for exact Templater expressions that cannot be projected statically. |
 
 Changing an update toggle does not itself rewrite notes. Run the manual command to enforce the selected categories immediately, or let a later template edit invoke them when automatic updates are enabled. No command has a default hotkey; assign one in **Settings → Hotkeys** if desired.
 
@@ -125,7 +129,7 @@ Arbitrary JavaScript control flow cannot always be reduced to one safe static ou
 
 ## Compatibility
 
-Version 0.4.0 targets **Obsidian 1.13.7**, the latest public desktop release when this version was produced, while retaining `minAppVersion: 1.8.7`. The plugin is not marked desktop-only and does not execute Node.js or Templater JavaScript at runtime.
+Version 0.4.1 targets **Obsidian 1.13.7**, the latest public desktop release when this version was produced, and requires Obsidian 1.13.0 for its declarative searchable settings. The plugin is not marked desktop-only and does not execute Node.js or Templater JavaScript at runtime.
 
 ## Installation
 
@@ -138,11 +142,11 @@ Version 0.4.0 targets **Obsidian 1.13.7**, the latest public desktop release whe
 
 ### Upgrading from 0.3.0
 
-Version 0.4.0 changes the manifest ID from `dynamically-updating-templates` to `dynamic-template-children-updater`, so Obsidian treats it as a newly identified plugin.
+Version 0.4.0 changed the manifest ID from `dynamically-updating-templates` to `dynamic-template-children-updater`, so Obsidian treats version 0.4.0 and later as a newly identified plugin.
 
 1. Disable **Dynamically Updating Templates**.
-2. Install version 0.4.0 in `<vault>/.obsidian/plugins/dynamic-template-children-updater/`.
-3. To retain settings and recorded baselines, copy `data.json` from the old plugin folder into the new folder before enabling the renamed plugin. Version 0.4.0 recognizes the legacy dynamic-slot format stored by 0.3.0.
+2. Install the latest release in `<vault>/.obsidian/plugins/dynamic-template-children-updater/`.
+3. To retain settings and recorded baselines, copy `data.json` from the old plugin folder into the new folder before enabling the renamed plugin. Version 0.4.0 and later recognize the legacy dynamic-slot format stored by 0.3.0.
 4. Enable **Dynamic Template Children Updater**, verify its settings and projection preview, and run a manual update.
 5. After confirming the migration, remove the old `dynamically-updating-templates` folder. Do not enable both IDs simultaneously.
 
@@ -167,7 +171,7 @@ The production bundle is written to `main.js`. The repository keeps that verifie
 
 ## Development and release
 
-The repository includes a lock file and uses the official `eslint-plugin-obsidianmd` rules. Before a Community directory submission, create a GitHub release whose tag exactly matches `manifest.json`'s version and attach `main.js`, `manifest.json`, and `styles.css`. Submit only the initial version through Obsidian's plugin-submission workflow; subsequent versions are distributed through matching GitHub releases.
+The repository includes a lock file and uses the official `eslint-plugin-obsidianmd` rules. Each GitHub release tag exactly matches `manifest.json`'s version and attaches `main.js`, `manifest.json`, and `styles.css`. The release workflow generates GitHub build-provenance attestations for all three assets before publishing them. Submit only the initial version through Obsidian's plugin-submission workflow; subsequent versions are distributed through matching GitHub releases.
 
 ## Attribution
 

@@ -1,6 +1,6 @@
 {
   "name": "dynamic-template-children-updater",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Update Obsidian template children from evolving core Templates and Templater templates.",
   "type": "module",
   "private": true,

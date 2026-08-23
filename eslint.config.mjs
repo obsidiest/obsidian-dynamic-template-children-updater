@@ -21,12 +21,6 @@ export default [
     }
   },
   {
-    files: ["src/settings.ts"],
-    rules: {
-      "obsidianmd/settings-tab/prefer-setting-definitions": "off"
-    }
-  },
-  {
     files: ["esbuild.config.mjs"],
     rules: {
       "obsidianmd/no-global-this": "off"
