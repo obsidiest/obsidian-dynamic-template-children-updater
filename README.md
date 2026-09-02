@@ -21,16 +21,16 @@ Note Template Example
 Note Template Example - Shot 2
 <img width="2558" height="1438" alt="Note Template_2" src="https://github.com/user-attachments/assets/444731a3-31ad-4f4c-805b-274c4105c441" />
 
-Preview Projected Defaults for Actvie Note Template
+`Preview Projected Defaults for Actvie Note Template` Command
 <img width="2558" height="1441" alt="Preview Projected Defaults for Actvie Note Template" src="https://github.com/user-attachments/assets/cfae0b1b-0117-4063-897c-24e2ee71cdbd" />
 
 Pre-Update Template Child Example
 <img width="2558" height="1438" alt="Pre-Update Template Child Example" src="https://github.com/user-attachments/assets/9b1c7eb1-dd91-48f6-972f-348cfd1412c3" />
 
-Template Child Example - Manually Update Template Note Children
+Template Child Example - `Manually Update Template Note Children` Command
 <img width="2558" height="1438" alt="Template Child Example - Manually Update Template Note Children" src="https://github.com/user-attachments/assets/172c3f5e-5d86-4f2a-805a-cea96d27e7af" />
 
-Template Child - Manually Update Template Note Children - Update Report
+Template Child - `Manually Update Template Note Children` Command - `Update Report`
 <img width="2558" height="1438" alt="Template Child - Manually Update Template Note Children - Update Report" src="https://github.com/user-attachments/assets/6f7d7262-8af2-43d4-83d5-05a5d533c875" />
 
 Updated Template Child Example
