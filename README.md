@@ -15,10 +15,10 @@ Templates can carry the same property as a self-link. Every Markdown file inside
 
 ## Feature Preview
 
-Note Template
+Note Template for Demo Example
 <img width="2558" height="1441" alt="Note Template" src="https://github.com/user-attachments/assets/2fea2cef-4194-4b9c-8735-d88ac6b4bf05" />
 
-Note Template - 2
+Note Template Example - Shot 2
 <img width="2558" height="1438" alt="Note Template_2" src="https://github.com/user-attachments/assets/444731a3-31ad-4f4c-805b-274c4105c441" />
 
 Preview Projected Defaults for Actvie Note Template
