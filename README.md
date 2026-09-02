@@ -34,8 +34,7 @@ Template Child - Manually Update Template Note Children - Update Report
 <img width="2558" height="1438" alt="Template Child - Manually Update Template Note Children - Update Report" src="https://github.com/user-attachments/assets/6f7d7262-8af2-43d4-83d5-05a5d533c875" />
 
 Updated Template Child Example
-<img width="2558" height="1438" alt="Updated Template Child Example" src="https://github.com/user-attachments/assets/2ca8325c-c7d3-48ca-ac5f-bc7c092f59a3" />
-
+<img width="2558" height="1438" alt="Updated Template Child Example" src="https://github.com/user-attachments/assets/62d3a1b9-fc3a-463e-9688-e7094b1a9fe1" />
 
 ## How synchronization works
 
