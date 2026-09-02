@@ -13,6 +13,30 @@ Note Template Class: "[[Book Note Template]]"
 
 Templates can carry the same property as a self-link. Every Markdown file inside a configured **Note template location** is treated as a template and is always excluded from child-note updates.
 
+## Feature Preview
+
+Note Template
+<img width="2558" height="1441" alt="Note Template" src="https://github.com/user-attachments/assets/2fea2cef-4194-4b9c-8735-d88ac6b4bf05" />
+
+Note Template - 2
+<img width="2558" height="1438" alt="Note Template_2" src="https://github.com/user-attachments/assets/444731a3-31ad-4f4c-805b-274c4105c441" />
+
+Preview Projected Defaults for Actvie Note Template
+<img width="2558" height="1441" alt="Preview Projected Defaults for Actvie Note Template" src="https://github.com/user-attachments/assets/cfae0b1b-0117-4063-897c-24e2ee71cdbd" />
+
+Pre-Update Template Child Example
+<img width="2558" height="1438" alt="Pre-Update Template Child Example" src="https://github.com/user-attachments/assets/9b1c7eb1-dd91-48f6-972f-348cfd1412c3" />
+
+Template Child Example - Manually Update Template Note Children
+<img width="2558" height="1438" alt="Template Child Example - Manually Update Template Note Children" src="https://github.com/user-attachments/assets/172c3f5e-5d86-4f2a-805a-cea96d27e7af" />
+
+Template Child - Manually Update Template Note Children - Update Report
+<img width="2558" height="1438" alt="Template Child - Manually Update Template Note Children - Update Report" src="https://github.com/user-attachments/assets/6f7d7262-8af2-43d4-83d5-05a5d533c875" />
+
+Updated Template Child Example
+<img width="2558" height="1438" alt="Updated Template Child Example" src="https://github.com/user-attachments/assets/2ca8325c-c7d3-48ca-ac5f-bc7c092f59a3" />
+
+
 ## How synchronization works
 
 The plugin records the current static projection of each designated template as its baseline. After the template projection changes, it performs a three-way merge among:
