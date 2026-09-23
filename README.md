@@ -1,10 +1,5 @@
 # Dynamic Template Children Updater
 
-![Obsidian](https://shields.io)
-
-[![Obsidian Min Version](https://img.shields.io/badge/Obsidian-1.13.0%2B-purple?style=flat-square)](https://obsidian.md)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
-
 Dynamic Template Children Updater keeps existing Obsidian notes synchronized with the templates that define their default frontmatter and Markdown structure. It supports ordinary Markdown templates used by the core **Templates** plugin and statically projects common **Templater** output without executing template code.
 
 Each managed note declares its template through a top-level property whose default name is `Note Template Class`:
