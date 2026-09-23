@@ -1,5 +1,7 @@
 # Dynamic Template Children Updater
 
+![Obsidian](https://shields.io)
+
 [![Obsidian Min Version](https://img.shields.io/badge/Obsidian-1.13.0%2B-purple?style=flat-square)](https://obsidian.md)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
